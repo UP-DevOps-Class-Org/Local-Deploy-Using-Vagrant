@@ -6,7 +6,7 @@
 
  1. Oracle VM Virtualbox
  2. Vagrant
- 3. Vagrant plugins
+ 3. Install Vagrant plugins
 	 - vagrant plugin install vagrant-hostmanager   
 	 - vagrant plugin install vagrant-vbguest
  4. Git bash or equivalent editor
@@ -14,16 +14,14 @@
 ### VM SETUP
  1. Clone source code.
  2. Cd into the repository.
- 3. Switch to the local-setup branch.
- 4. cd into vagrant/Manual_provisioning
 
-Bring up vm’s
+Bring up vm’s run cmd below
 
     $ vagrant up
 
 ***NOTE***: Bringing up all the vm’s may take a long time based on various factors.
 If vm setup stops in the middle run “vagrant up” command again.
-INFO: All the vm’s hostname and /etc/hosts file entries will be automatically updated
+***INFO***: All the vm’s hostname and /etc/hosts file entries will be automatically updated
 
 
 ![image](https://user-images.githubusercontent.com/34917417/222372757-2b0ac3f7-01ab-4135-9204-10a9089c0188.png)
@@ -77,8 +75,8 @@ Download Source code & Initialize Database.
 
     # git clone -b local-setup https://github.com/devopshydclub/vprofile-project.git
     # cd vprofile-project
-    # mysql -u root -padmin123 accounts < src/main/resources/db_backup.sql
-    # mysql -u root -padmin123 accounts
+    # mysql -u root -p admin123 accounts < src/main/resources/db_backup.sql
+    # mysql -u root -p admin123 accounts
     mysql> show tables;
 
 Restart mariadb-server
