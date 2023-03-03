@@ -96,12 +96,12 @@ Starting the firewall and allowing the mariadb to access from port no. 3306
 
 Install, start & enable memcache on port 11211
 
-    #yum install epel-release -y
-    #yum install memcached -y
-    #systemctl start memcached
-    #systemctl enable memcached
-    #systemctl status memcached
-    #memcached -p 11211 -U 11111 -u memcached -d
+    # yum install epel-release -y
+    # yum install memcached -y
+    # systemctl start memcached
+    # systemctl enable memcached
+    # systemctl status memcached
+    # memcached -p 11211 -U 11111 -u memcached -d
 
 Starting the firewall and allowing the port 11211 to access memcache
 
@@ -182,6 +182,7 @@ Update OS with latest patches
     # yum update -y
     
 Set Repository
+
     # yum install epel-release -y
 
 Install Dependencies
@@ -211,3 +212,67 @@ Make tomcat user owner of tomcat home dir
     # chown -R tomcat.tomcat /usr/local/tomcat8
    
    
+Setup systemd for tomcat
+Update file with following content.
+
+      vi /etc/systemd/system/tomcat.service
+
+```   
+   [Unit]
+   Description=Tomcat
+   After=network.target
+
+   [Service]
+   User=tomcat
+   WorkingDirectory=/usr/local/tomcat8
+   Environment=JRE_HOME=/usr/lib/jvm/jre
+   Environment=JAVA_HOME=/usr/lib/jvm/jre
+   Environment=CATALINA_HOME=/usr/local/tomcat8
+   Environment=CATALINE_BASE=/usr/local/tomcat8
+   ExecStart=/usr/local/tomcat8/bin/catalina.sh run
+   ExecStop=/usr/local/tomcat8/bin/shutdown.sh
+   SyslogIdentifier=tomcat-%i
+
+   [Install] 
+   WantedBy=multi-user.target
+```
+
+      # systemctl daemon-reload
+      # systemctl start tomcat
+      # systemctl enable tomcat
+
+Enabling the firewall and allowing port 8080 to access the tomcat
+
+      # systemctl start firewalld
+      # systemctl enable firewalld
+      # firewall-cmd --get-active-zones
+      # firewall-cmd --zone=public --add-port=8080/tcp --permanent
+      # firewall-cmd --reload
+
+### CODE BUILD & DEPLOY (app01)
+
+Download Source code
+
+      # git clone https://github.com/UP-DevOps-Class-Org/deploy-sample-webapp-vagrant.git
+
+Update configuration
+
+      # cd deploy-sample-webapp-vagrant
+      # vim src/main/resources/application.properties
+      # Update file with backend server details
+
+Build code
+
+Run below command inside the repository (deploy-sample-webapp-vagrant)
+      # mvn install
+
+Deploy artifact
+
+      # systemctl stop tomcat
+      # sleep 120
+      # rm -rf /usr/local/tomcat8/webapps/ROOT*
+      # cp target/vprofile-v2.war /usr/local/tomcat8/webapps/ROOT.war
+      # systemctl start tomcat
+      # sleep 300
+      # chown tomcat.tomcat usr/local/tomcat8/webapps -R
+      # systemctl restart tomcat
