@@ -264,6 +264,7 @@ Update configuration
 Build code
 
 Run below command inside the repository (deploy-sample-webapp-vagrant)
+
       # mvn install
 
 Deploy artifact
